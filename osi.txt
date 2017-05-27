@@ -437,3 +437,102 @@ data
 
 checksum = ip source, ip dest, protocol from IP header, len from UDP header udp datagram
 
+**************************************************************************
+
+Маршрутизируемые ЛВС
+
+
+есть коммутаторы-маррутизаторы. Где хотят они L2, где хотят L3. L2 делают виртуальными SVI(switch virtual interface)
+
+*******************************************************************************
+
+TCP
+
+connection-oriented - требует установки соединения
+потоковая передача данных
+Полнодуплексный
+Надежный
+
+Сегментирование
+
+
+Заголовок TCP
+Source Port
+Dest port
+Sequence Number 4б - указатель на 1ый байт, который передается
+Acknowledgement Number 4б - номер следующего байта, который ожидается подтверждения
+Data Offset
+Reserved
+Flags
+Window - количество байт, которые получатель может в текущий момент принять
+Checksum
+Urgent pointer - Указатель на срочные данные
+Options
+
+
+checksum = IP source IS desp, protocol ,TCP len, TCP data
+
+SYN- установка соединения
+RST - сброс соединения
+
+Options
+2 - MSS maximum segment size
+
+
+Установкаа соединения:
+ определяется 2мя сокетами (IP address, port)
+ 
+ Этапы:
+ 	установка Three Way handshake
+ 	Передача данных
+ 	закрытие 
+ 
+ 
+ Client:
+		TCP syn segment
+		1 ый сегмент SYN сегмент
+		установлен SYN флаг
+		Seq number = random
+
+		Переход в состояние SYN sent, создается TCB(transport control block)
+		
+	Server:
+		listening socket
+		recieve SYN segment, create TCB
+		переход в состояние SYN recieved
+		отправление flags SYN+ACK, ACK Number = Seq Number + 1, Seq Number = random
+		
+	Client:
+	ACK = Seq Num + 1
+	переход в состояние Established
+	
+	Соединение установлено, Сервер ожидает получить байт = SYN
+	
+	
+Завершнение соединения:
+	Client:
+		flag FIN + ACK
+		status FIN WAIT1
+		
+	Server:
+		ACK
+		
+	Client:
+		status FIN WAIT 2
+		
+	Server:
+		FIN
+	
+	Client:
+		ACK
+	
+	Server:
+		status closed
+		
+
+TCP ISN
+TCP SYN Cookies
+	защита от атаки SYN-flood
+	
+
+ 
